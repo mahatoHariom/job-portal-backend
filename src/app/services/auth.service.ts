@@ -3,6 +3,7 @@ import { compare, hash } from 'bcryptjs'
 import ApiError from '@/infrastructure/config/ApiError'
 import { TYPES } from '@/types'
 import { PrismaAuthRepository } from '@/domain/repositories/auth-repository'
+import { User } from '@prisma/client'
 
 interface AuthenticateRequest {
   email: string
@@ -20,18 +21,20 @@ interface RegisterRequest {
 export class AuthService {
   constructor(@inject(TYPES.IAuthRepository) private authRepository: PrismaAuthRepository) {}
 
-  async authenticate({ email, password }: AuthenticateRequest) {
+  async authenticate({ email, password }: AuthenticateRequest): Promise<Partial<User> | null> {
     const user = await this.authRepository.findByEmail(email)
     if (!user) {
       throw new ApiError('User does not exist', 401)
     }
 
-    const doesPasswordMatch = await compare(password, user.password)
+    const doesPasswordMatch = compare(password, user?.password as string)
     if (!doesPasswordMatch) {
       throw new ApiError('Invalid credentials', 409)
     }
 
-    return { user }
+    return { id: user.id, fullName: user.fullName, email: user.email, isVerified: user.isVerified, role: user.role }
+
+    // return { user }
   }
 
   async register({ email, fullName, password, confirmPassword }: RegisterRequest) {

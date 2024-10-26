@@ -11,9 +11,14 @@ export class AuthController {
 
   async authenticate(request: FastifyRequest<{ Body: LoginUserInput }>, reply: FastifyReply) {
     const { email, password } = request.body
-    const { user } = await this.authService.authenticate({ email, password })
+    const user = await this.authService.authenticate({ email, password })
+
+    if (!user) {
+      return reply.status(401).send({ error: 'Invalid credentials' })
+    }
 
     const refreshToken = generateRefreshToken(user)
+    const accessToken = generateJsonWebToken(user)
 
     return reply
       .setCookie('refreshToken', refreshToken, {
@@ -23,7 +28,7 @@ export class AuthController {
         httpOnly: true
       })
       .status(200)
-      .send({ accessToken: generateJsonWebToken(user) })
+      .send({ accessToken, refreshToken, user })
   }
 
   async register(request: FastifyRequest<{ Body: CreateUserInput }>, reply: FastifyReply) {

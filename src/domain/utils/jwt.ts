@@ -3,13 +3,13 @@ import jwt from 'jsonwebtoken'
 import { env } from 'process'
 // import { User } from "@/@types/user.type";
 
-export function generateJsonWebToken({ id, name, email, role }: User) {
-  return jwt.sign({ id, name, email, role }, env.JWT_SECRET as string, {
+export function generateJsonWebToken({ id, fullName, email, role }: Partial<User>) {
+  return jwt.sign({ id, fullName, email, role }, env.JWT_SECRET as string, {
     expiresIn: env.ACCESS_TOKEN_EXPIRES
   })
 }
-export function generateRefreshToken({ id, name, email, role }: User) {
-  return jwt.sign({ id, name, role, email }, env.JWT_SECRET as string, {
+export function generateRefreshToken({ id, fullName, email, role }: Partial<User>) {
+  return jwt.sign({ id, fullName, role, email }, env.JWT_SECRET as string, {
     expiresIn: env.REFRESH_TOKEN_EXPIRES
   })
 }
