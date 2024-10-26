@@ -9,14 +9,16 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(cuid())
-  fullName  String    @map("name")
-  email     String    @unique
-  password  String
-  role      UserRole  @default(user)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Product   Product[]
+  id         String   @id @default(cuid())
+  fullName   String   @map("name")
+  email      String   @unique
+  password   String
+  isVerified Boolean  @default(false)
+  role       UserRole @default(user)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  Product Product[]
 }
 
 model Product {
