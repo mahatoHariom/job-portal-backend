@@ -15,6 +15,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
           201: $ref('loginResponseSchema')
         }
       }
+      // onRequest: fastify.authenticate
     },
     authController.authenticate.bind(authController)
   )
@@ -28,6 +29,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
         }
       }
     },
+
     authController.register.bind(authController)
   )
 }

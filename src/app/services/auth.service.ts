@@ -11,8 +11,9 @@ interface AuthenticateRequest {
 
 interface RegisterRequest {
   email: string
-  name: string
+  fullName: string
   password: string
+  confirmPassword: string
 }
 
 @injectable()
@@ -33,9 +34,12 @@ export class AuthService {
     return { user }
   }
 
-  async register({ email, name, password }: RegisterRequest) {
+  async register({ email, fullName, password, confirmPassword }: RegisterRequest) {
+    if (password !== confirmPassword) {
+      throw new ApiError('Password not matched', 403)
+    }
     const hashedPassword = await hash(password, 12)
-    const user = await this.authRepository.create({ email, name, password: hashedPassword })
+    const user = await this.authRepository.create({ email, fullName, password: hashedPassword })
     return user
   }
 }

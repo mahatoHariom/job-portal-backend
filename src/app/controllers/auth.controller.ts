@@ -27,9 +27,8 @@ export class AuthController {
   }
 
   async register(request: FastifyRequest<{ Body: CreateUserInput }>, reply: FastifyReply) {
-    const { email, name, password } = request.body
-    const user = await this.authService.register({ email, name, password })
-
+    const { email, fullName, password, confirmPassword } = request.body
+    const user = await this.authService.register({ email, fullName, password, confirmPassword })
     return reply.status(201).send(user)
   }
 }

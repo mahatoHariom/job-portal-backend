@@ -10,7 +10,7 @@ datasource db {
 
 model User {
   id        String    @id @default(cuid())
-  name      String
+  fullName  String    @map("name")
   email     String    @unique
   password  String
   role      UserRole  @default(user)
@@ -27,20 +27,20 @@ model Product {
   originalPrice Int
   discountPrice Int
   stock         Int
-  user          User     @relation(fields: [userId], references: [id])
   userId        String
-  images        Image[]
   soldOut       Int?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  images        Image[]
+  user          User     @relation(fields: [userId], references: [id])
 }
 
 model Image {
   id        String   @id @default(cuid())
   public_id String
   imgSrc    String
-  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 enum UserRole {

@@ -1,15 +1,22 @@
 import { z } from 'zod'
 import { buildJsonSchemas } from 'fastify-zod'
 
-export const createUserSchema = z.object({
-  email: z.string(),
-  password: z.string().min(6),
-  name: z.string()
-})
+export const createUserSchema = z
+  .object({
+    email: z.string().email(),
+    password: z.string().min(6),
+    fullName: z.string(),
+    confirmPassword: z.string().min(6) // Add confirmPassword field
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'] // The error will show on confirmPassword field
+  })
+
 export const createUserResponseSchema = z.object({
   id: z.string(),
   email: z.string(),
-  name: z.string()
+  fullName: z.string() // Update name to fullName
 })
 
 export type CreateUserInput = z.infer<typeof createUserSchema>
@@ -24,7 +31,9 @@ export const loginSchema = z.object({
     .email(),
   password: z.string().min(6)
 })
+
 export type LoginUserInput = z.infer<typeof loginSchema>
+
 export const loginResponseSchema = z.object({
   accessToken: z.string()
 })
