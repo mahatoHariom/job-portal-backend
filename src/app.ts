@@ -5,10 +5,11 @@ import fastifyJwt from '@fastify/jwt'
 import fastifyCookie, { FastifyCookieOptions } from '@fastify/cookie'
 import cors from '@fastify/cors'
 import fhelmet from '@fastify/helmet'
-import { env } from './env'
+// import { env } from './env'
 import fSwagger from '@fastify/swagger'
 import fSwaggerUi from '@fastify/swagger-ui'
 import fRateLimit from '@fastify/rate-limit'
+import dotenv from 'dotenv'
 // import { authSchemas } from './domain/schemas/auth-schemas'
 
 import { errorHandler } from './app/middlewares/errorHandler'
@@ -19,6 +20,7 @@ import { swaggerUiOptions } from './infrastructure/config/swagger'
 import userRoutes from './infrastructure/http/routes/users-routes'
 // import { userSchemas } from './domain/schemas/user-schema'
 
+dotenv.config()
 const createApp = async () => {
   const app: FastifyInstance = fastify({ logger: loggerConfig })
 
@@ -28,7 +30,7 @@ const createApp = async () => {
 
   app.register(cors, {
     credentials: true,
-    origin: [env.CLIENT_ENDPOINT]
+    origin: [process.env.CLIENT_ENDPOINT as string]
   })
 
   app.register(fhelmet, { contentSecurityPolicy: false })
@@ -65,12 +67,12 @@ const createApp = async () => {
   })
 
   app.register(fastifyCookie, {
-    secret: env.JWT_SECRET,
+    secret: process.env.JWT_SECRET,
     hook: 'preHandler',
     parseOptions: {}
   } as FastifyCookieOptions)
 
-  app.register(fastifyJwt, { secret: env.JWT_SECRET })
+  app.register(fastifyJwt, { secret: process.env.JWT_SECRET as string })
 
   // for (const schema of [...authSchemas, ...userSchemas]) {
   //   app.addSchema(schema)

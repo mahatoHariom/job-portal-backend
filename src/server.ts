@@ -1,13 +1,12 @@
 import createApp from './app'
-import { env } from './env'
 
 const startServer = async () => {
   const server = await createApp()
   try {
     server.listen({
-      port: env.PORT
+      port: Number(process.env.PORT) || 9000
     })
-    console.log(`HTTP server running on http://localhost:${env.PORT}`)
+    console.log(`HTTP server running on http://localhost:${process.env.PORT}`)
   } catch (err) {
     console.error('Error starting server:', err)
     process.exit(1)

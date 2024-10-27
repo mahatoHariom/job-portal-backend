@@ -1,9 +1,7 @@
-import { env } from '@/env'
-
 export const esewaConfig = {
-  merchantId: env.MERCHANT_ID,
-  successUrl: env.ESEWA_SUCCESS_URL,
-  failureUrl: env.ESEWA_FAILURE_URL,
-  esewaPaymentUrl: env.ESEWA_PAYMENT_URL,
-  secret: env.ESEWA_SECRET
+  merchantId: process.env.MERCHANT_ID,
+  successUrl: process.env.ESEWA_SUCCESS_URL,
+  failureUrl: process.env.ESEWA_FAILURE_URL,
+  esewaPaymentUrl: process.env.ESEWA_PAYMENT_URL,
+  secret: process.env.ESEWA_SECRET
 }

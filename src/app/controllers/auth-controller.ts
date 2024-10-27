@@ -59,6 +59,7 @@ export class AuthController {
       throw new ApiError(Messages.AMOUNT_MUST_BE_GREATER, StatusCode.BadRequest)
     }
 
+    console.log(esewaConfig, 'config')
     let paymentData: PaymentData = {
       amount,
       failure_url: esewaConfig.failureUrl as string,
@@ -86,6 +87,7 @@ export class AuthController {
         })
       }
     } catch (error) {
+      console.log(error)
       throw new ApiError(Messages.PAYMENT_FAILED, StatusCode.InternalServerError)
       // return reply.status(500).send({ error: 'Payment initiation failed' })
     }
