@@ -1,8 +1,8 @@
 import { Prisma, User } from '@prisma/client'
 import { injectable } from 'inversify'
-import { IAuthRepository } from '../interfaces/auth.interface'
+import { IAuthRepository } from '../interfaces/auth-interface'
 
-import { PrismaService } from '@/app/services/prisma.service'
+import { PrismaService } from '@/app/services/prisma-service'
 
 @injectable()
 export class PrismaAuthRepository implements IAuthRepository {
@@ -15,6 +15,12 @@ export class PrismaAuthRepository implements IAuthRepository {
   async findByEmail(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: { email }
+    })
+  }
+
+  async findById(id: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { id }
     })
   }
 }

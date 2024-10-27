@@ -2,8 +2,9 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 import { inject, injectable } from 'inversify'
 import { generateJsonWebToken, generateRefreshToken } from '@/domain/utils/jwt'
 import { LoginUserInput, CreateUserInput } from '@/domain/schemas/auth-schemas'
-import { AuthService } from '../services/auth.service'
+import { AuthService } from '../services/auth-service'
 import { TYPES } from '@/types'
+import ApiError from '@/infrastructure/config/ApiError'
 
 @injectable()
 export class AuthController {
@@ -14,7 +15,7 @@ export class AuthController {
     const user = await this.authService.authenticate({ email, password })
 
     if (!user) {
-      return reply.status(401).send({ error: 'Invalid credentials' })
+      throw new ApiError('Invalid credentials', 401)
     }
 
     const refreshToken = generateRefreshToken(user)

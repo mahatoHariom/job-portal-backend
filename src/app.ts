@@ -9,13 +9,15 @@ import { env } from './env'
 import fSwagger from '@fastify/swagger'
 import fSwaggerUi from '@fastify/swagger-ui'
 import fRateLimit from '@fastify/rate-limit'
-import { userSchemas } from './domain/schemas/auth-schemas'
+import { authSchemas } from './domain/schemas/auth-schemas'
 import { productSchemas } from './domain/schemas/product-schema'
 import { errorHandler } from './app/middlewares/errorHandler'
 import setAuthenticateJWT from './app/middlewares/verify-jwt'
 import { container } from './infrastructure/container'
-import authRoutes from './infrastructure/http/routes/auth.route'
+import authRoutes from './infrastructure/http/routes/auth-route'
 import { swaggerUiOptions } from './infrastructure/config/swagger'
+import userRoutes from './infrastructure/http/routes/users-routes'
+import { userSchemas } from './domain/schemas/user-schema'
 
 const createApp = async () => {
   const app: FastifyInstance = fastify({ logger: loggerConfig })
@@ -70,7 +72,7 @@ const createApp = async () => {
 
   app.register(fastifyJwt, { secret: env.JWT_SECRET })
 
-  for (const schema of [...userSchemas, ...productSchemas]) {
+  for (const schema of [...authSchemas, ...productSchemas, ...userSchemas]) {
     app.addSchema(schema)
   }
 
@@ -79,6 +81,7 @@ const createApp = async () => {
   app.decorate('container', container)
 
   app.register(authRoutes, { prefix: '/api/v1/auth' })
+  app.register(userRoutes, { prefix: '/api/v1/user' })
   app.setErrorHandler(errorHandler)
 
   return app

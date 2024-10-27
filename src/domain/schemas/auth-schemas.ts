@@ -6,11 +6,11 @@ export const createUserSchema = z
     email: z.string().email(),
     password: z.string().min(6),
     fullName: z.string(),
-    confirmPassword: z.string().min(6) // Add confirmPassword field
+    confirmPassword: z.string().min(6)
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
-    path: ['confirmPassword'] // The error will show on confirmPassword field
+    path: ['confirmPassword']
   })
 
 export const createUserResponseSchema = z.object({
@@ -38,7 +38,7 @@ export const loginResponseSchema = z.object({
   accessToken: z.string()
 })
 
-export const { schemas: userSchemas, $ref } = buildJsonSchemas(
+export const { schemas: authSchemas, $ref } = buildJsonSchemas(
   {
     createUserSchema,
     createUserResponseSchema,

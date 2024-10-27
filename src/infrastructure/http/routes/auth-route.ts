@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { $ref } from '@/domain/schemas/auth-schemas'
 import { TYPES } from '@/types'
-import { AuthController } from '@/app/controllers/auth.controller'
+import { AuthController } from '@/app/controllers/auth-controller'
 
 export default async function authRoutes(fastify: FastifyInstance) {
   const authController = fastify.container.get<AuthController>(TYPES.AuthController)
