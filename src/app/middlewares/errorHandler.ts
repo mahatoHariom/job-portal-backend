@@ -1,21 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiError from '@/infrastructure/config/ApiError'
 import { FastifyError, FastifyReply, FastifyRequest } from 'fastify'
-import { ZodError } from 'zod'
-
-export const errorHandler = (
-  error: FastifyError | ZodError | ApiError | Error,
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
-  console.log(error, 'error')
-  if (error instanceof ZodError) {
-    reply.status(400).send({
-      statusCode: 400,
-      error: 'Bad Request',
-      issues: error.issues
-    })
-  } else if (error instanceof ApiError) {
+export const errorHandler = (error: FastifyError | ApiError | Error, request: FastifyRequest, reply: FastifyReply) => {
+  if (error instanceof ApiError) {
     reply.status(error.statusCode).send({
       statusCode: error.statusCode,
       error: error.statusMessage,

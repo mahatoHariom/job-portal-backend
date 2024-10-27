@@ -1,5 +1,10 @@
 import { FastifyInstance } from 'fastify'
-import { $ref } from '@/domain/schemas/auth-schemas'
+import {
+  createUserResponseSchema,
+  createUserSchema,
+  loginResponseSchema,
+  loginSchema
+} from '@/domain/schemas/auth-schemas'
 import { TYPES } from '@/types'
 import { AuthController } from '@/app/controllers/auth-controller'
 
@@ -10,9 +15,9 @@ export default async function authRoutes(fastify: FastifyInstance) {
     '/login',
     {
       schema: {
-        body: $ref('loginSchema'),
+        body: loginSchema,
         response: {
-          201: $ref('loginResponseSchema')
+          201: loginResponseSchema
         }
       }
       // onRequest: fastify.authenticate
@@ -23,9 +28,9 @@ export default async function authRoutes(fastify: FastifyInstance) {
     '/register',
     {
       schema: {
-        body: $ref('createUserSchema'),
+        body: createUserSchema,
         response: {
-          201: $ref('createUserResponseSchema')
+          201: createUserResponseSchema
         }
       }
     },
@@ -37,7 +42,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
       {
         schema: {
           response: {
-            201: $ref('createUserResponseSchema')
+            201: createUserResponseSchema
           }
         },
         onRequest: fastify.authenticate

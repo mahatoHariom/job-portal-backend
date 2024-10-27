@@ -1,7 +1,8 @@
 import { FastifyInstance } from 'fastify'
-import { $ref } from '@/domain/schemas/user-schema'
+// import { $ref } from '@/domain/schemas/user-schema'
 import { TYPES } from '@/types'
 import { UserControllers } from '@/app/controllers/users-controller'
+import { userDetailSchema } from '@/domain/schemas/user-schema'
 
 export default async function userRoutes(fastify: FastifyInstance) {
   const userControllers = fastify.container.get<UserControllers>(TYPES.UserControllers)
@@ -11,7 +12,7 @@ export default async function userRoutes(fastify: FastifyInstance) {
     {
       schema: {
         tags: ['User'],
-        body: $ref('createUserDetailSchema'),
+        body: userDetailSchema,
         response: {
           201: { type: 'null' }
         }

@@ -1,54 +1,39 @@
-import { z } from 'zod'
-import { buildJsonSchemas } from 'fastify-zod'
+import { Type, Static } from '@sinclair/typebox'
+import { FastifyInstance } from 'fastify'
 import { UserRole } from '@prisma/client'
 
-export const createUserSchema = z
-  .object({
-    email: z.string().email(),
-    password: z.string().min(6),
-    fullName: z.string(),
-    confirmPassword: z.string().min(6)
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword']
-  })
-
-export const createUserResponseSchema = z.object({
-  id: z.string(),
-  email: z.string(),
-  fullName: z.string(),
-  isVerified: z.boolean(),
-  role: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date()
+// Schema for user creation
+export const createUserSchema = Type.Object({
+  email: Type.String({ format: 'email' }),
+  password: Type.String({ minLength: 6 }),
+  fullName: Type.String(),
+  confirmPassword: Type.String({ minLength: 6 })
 })
 
-export type CreateUserInput = z.infer<typeof createUserSchema>
-export type CreateUserResponse = z.infer<typeof createUserResponseSchema>
-
-export const loginSchema = z.object({
-  email: z
-    .string({
-      required_error: 'Email is required',
-      invalid_type_error: 'Email must be a string'
-    })
-    .email(),
-  password: z.string().min(6)
+// Schema for user response
+export const createUserResponseSchema = Type.Object({
+  id: Type.String(),
+  email: Type.String(),
+  fullName: Type.String(),
+  isVerified: Type.Boolean(),
+  role: Type.Enum(UserRole),
+  createdAt: Type.String({ format: 'date-time' }),
+  updatedAt: Type.String({ format: 'date-time' })
 })
 
-export type LoginUserInput = z.infer<typeof loginSchema>
-
-export const loginResponseSchema = z.object({
-  accessToken: z.string()
+// Schema for login request
+export const loginSchema = Type.Object({
+  email: Type.String({ format: 'email' }),
+  password: Type.String({ minLength: 6 })
 })
 
-export const { schemas: authSchemas, $ref } = buildJsonSchemas(
-  {
-    createUserSchema,
-    createUserResponseSchema,
-    loginSchema,
-    loginResponseSchema
-  },
-  { $id: 'user' }
-)
+// Schema for login response
+export const loginResponseSchema = Type.Object({
+  accessToken: Type.String()
+})
+
+// Types inferred from schemas
+export type CreateUserInput = Static<typeof createUserSchema>
+export type CreateUserResponse = Static<typeof createUserResponseSchema>
+export type LoginUserInput = Static<typeof loginSchema>
+export type LoginResponse = Static<typeof loginResponseSchema>

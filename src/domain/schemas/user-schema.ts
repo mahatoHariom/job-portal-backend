@@ -1,32 +1,25 @@
-import { z } from 'zod'
-import { buildJsonSchemas } from 'fastify-zod'
+import { Type } from '@sinclair/typebox'
+// import { FastifyInstance } from 'fastify'
 
-export const userDetailSchema = z.object({
-  phoneNumber: z.string().optional(),
-  address: z.string().optional(),
-  motherName: z.string().optional(),
-  fatherName: z.string().optional(),
-  parentContact: z.string().optional(),
-  schoolCollegeName: z.string().optional()
+// Define the individual user detail schema
+export const userDetailSchema = Type.Object({
+  phoneNumber: Type.Optional(Type.String()),
+  address: Type.Optional(Type.String()),
+  motherName: Type.Optional(Type.String()),
+  fatherName: Type.Optional(Type.String()),
+  parentContact: Type.Optional(Type.String()),
+  schoolCollegeName: Type.Optional(Type.String())
 })
 
-export const createUserDetailSchema = z.object({
-  ...userDetailSchema.shape
-})
+// Create an extended schema for response that includes `id` and `userId`
+export const userDetailResponseSchema = Type.Intersect([
+  userDetailSchema,
+  Type.Object({
+    id: Type.String(),
+    userId: Type.String()
+  })
+])
 
-export const userDetailResponseSchema = userDetailSchema.extend({
-  id: z.string(),
-  userId: z.string()
-})
-
-// export type UserDetail = z.infer<typeof userDetailSchema>
-export type CreateUserDetailInput = z.infer<typeof createUserDetailSchema>
-export type UserDetailResponse = z.infer<typeof userDetailResponseSchema>
-
-export const { schemas: userSchemas, $ref } = buildJsonSchemas(
-  {
-    createUserDetailSchema,
-    userDetailResponseSchema
-  },
-  { $id: 'UserSchema' }
-)
+// You could define types for your schemas if needed using TypeBox's static inference
+export type CreateUserDetailInput = typeof userDetailSchema
+export type UserDetailResponse = typeof userDetailResponseSchema
