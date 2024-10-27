@@ -4,6 +4,7 @@ import ApiError from '@/infrastructure/config/ApiError'
 import { TYPES } from '@/types'
 import { PrismaAuthRepository } from '@/domain/repositories/auth-repository'
 import { User } from '@prisma/client'
+import { Messages, StatusCode } from '@/domain/constants/messages'
 
 interface AuthenticateRequest {
   email: string
@@ -24,23 +25,21 @@ export class AuthService {
   async authenticate({ email, password }: AuthenticateRequest): Promise<Partial<User> | null> {
     const user = await this.authRepository.findByEmail(email)
     if (!user) {
-      throw new ApiError('User does not exist', 401)
+      throw new ApiError(Messages.USER_NOT_FOUND, StatusCode.Unauthorized)
     }
 
     const doesPasswordMatch = await compare(password, user?.password as string)
-    console.log(doesPasswordMatch, 'SDfd')
+
     if (!doesPasswordMatch) {
-      throw new ApiError('Invalid credentials', 409)
+      throw new ApiError(Messages.PASSWORD_NOT_MATCHED, StatusCode.Forbidden)
     }
 
     return { id: user.id, fullName: user.fullName, email: user.email, isVerified: user.isVerified, role: user.role }
-
-    // return { user }
   }
 
   async register({ email, fullName, password, confirmPassword }: RegisterRequest) {
     if (password !== confirmPassword) {
-      throw new ApiError('Password not matched', 403)
+      throw new ApiError(Messages.PASSWORD_NOT_MATCHED, StatusCode.Forbidden)
     }
     const hashedPassword = await hash(password, 12)
     const user = await this.authRepository.create({ email, fullName, password: hashedPassword })

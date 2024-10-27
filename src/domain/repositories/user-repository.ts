@@ -19,7 +19,7 @@ export class PrismaUserRepository implements IUserRepository {
         userId
       }
     })
-    console.log('Completed', userId)
+
     await this.prisma.user.update({
       where: {
         id: userId

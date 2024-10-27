@@ -44,5 +44,6 @@ export default async function authRoutes(fastify: FastifyInstance) {
       },
 
       authController.getProfileData.bind(authController)
-    )
+    ),
+    fastify.post('/payments/initiate', authController.initiateEsewaPayment.bind(authController))
 }

@@ -6,6 +6,7 @@ import { CreateUserDetailInput } from '@/domain/schemas/user-schema'
 import ApiError from '@/infrastructure/config/ApiError'
 import { PrismaAuthRepository } from '@/domain/repositories/auth-repository'
 import { UserServices } from '../services/user-service'
+import { Messages, StatusCode } from '@/domain/constants/messages'
 
 @injectable()
 export class UserControllers {
@@ -17,17 +18,14 @@ export class UserControllers {
 
   async completeProfile(request: FastifyRequest<{ Body: CreateUserDetailInput }>, reply: FastifyReply) {
     const data = request.body
-    console.log(1)
 
     const user = await this.authRepository.findById(request?.user?.id)
-    console.log(2)
+
     if (!user) {
-      throw new ApiError('Invalid credentials', 401)
+      throw new ApiError(Messages.INVALID_CREDENTIAL, StatusCode.Unauthorized)
     }
-    console.log(3)
 
     await this.userServices.completeProfile(data, user.id)
-    console.log(4)
 
     reply.status(200).send()
   }
