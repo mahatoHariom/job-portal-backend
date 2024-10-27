@@ -17,12 +17,17 @@ export class UserControllers {
 
   async completeProfile(request: FastifyRequest<{ Body: CreateUserDetailInput }>, reply: FastifyReply) {
     const data = request.body
+    console.log(1)
+
     const user = await this.authRepository.findById(request?.user?.id)
+    console.log(2)
     if (!user) {
       throw new ApiError('Invalid credentials', 401)
     }
+    console.log(3)
 
     await this.userServices.completeProfile(data, user.id)
+    console.log(4)
 
     reply.status(200).send()
   }

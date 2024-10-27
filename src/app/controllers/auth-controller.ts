@@ -18,8 +18,8 @@ export class AuthController {
       throw new ApiError('Invalid credentials', 401)
     }
 
-    const refreshToken = generateRefreshToken(user)
-    const accessToken = generateJsonWebToken(user)
+    const refreshToken = await generateRefreshToken(user)
+    const accessToken = await generateJsonWebToken(user)
 
     return reply
       .setCookie('refreshToken', refreshToken, {
@@ -33,8 +33,17 @@ export class AuthController {
   }
 
   async register(request: FastifyRequest<{ Body: CreateUserInput }>, reply: FastifyReply) {
+    console.log('called')
     const { email, fullName, password, confirmPassword } = request.body
     const user = await this.authService.register({ email, fullName, password, confirmPassword })
+    return reply.status(201).send(user)
+  }
+  async getProfileData(request: FastifyRequest, reply: FastifyReply) {
+    console.log('getProfileData', request)
+    const user = await this.authService.getProfileData(request?.user?.id)
+    if (!user) {
+      throw new ApiError('User not found', 404)
+    }
     return reply.status(201).send(user)
   }
 }

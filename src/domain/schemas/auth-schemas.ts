@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { buildJsonSchemas } from 'fastify-zod'
+import { UserRole } from '@prisma/client'
 
 export const createUserSchema = z
   .object({
@@ -16,7 +17,11 @@ export const createUserSchema = z
 export const createUserResponseSchema = z.object({
   id: z.string(),
   email: z.string(),
-  fullName: z.string() // Update name to fullName
+  fullName: z.string(),
+  isVerified: z.boolean(),
+  role: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date()
 })
 
 export type CreateUserInput = z.infer<typeof createUserSchema>

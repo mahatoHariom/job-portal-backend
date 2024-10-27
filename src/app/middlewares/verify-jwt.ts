@@ -7,12 +7,12 @@ const setAuthenticateJWT = (server: FastifyInstance) => {
   server.decorate('authenticate', async (req: FastifyRequest) => {
     const token = req.headers.authorization
 
-    console.log(token, 'SDf')
     const accessToken = token?.split(' ')[1]
     if (!token) {
       throw new ApiError('Token not found', 401)
     }
-    const decoded = validateAccessToken(accessToken as string)
+    const decoded = await validateAccessToken(accessToken as string)
+    console.log(decoded, 'SDfsdfsdeconded')
     if (!decoded) {
       throw new ApiError('Invalid or token expired', 401)
     }

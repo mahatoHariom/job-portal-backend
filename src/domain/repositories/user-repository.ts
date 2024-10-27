@@ -19,14 +19,14 @@ export class PrismaUserRepository implements IUserRepository {
         userId
       }
     })
-
-    const updatedUser = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: { userDetail: true }
+    console.log('Completed', userId)
+    await this.prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        isVerified: true
+      }
     })
-
-    if (!updatedUser) {
-      throw new Error(`User with id ${userId} not found`)
-    }
   }
 }

@@ -27,7 +27,8 @@ export class AuthService {
       throw new ApiError('User does not exist', 401)
     }
 
-    const doesPasswordMatch = compare(password, user?.password as string)
+    const doesPasswordMatch = await compare(password, user?.password as string)
+    console.log(doesPasswordMatch, 'SDfd')
     if (!doesPasswordMatch) {
       throw new ApiError('Invalid credentials', 409)
     }
@@ -43,6 +44,10 @@ export class AuthService {
     }
     const hashedPassword = await hash(password, 12)
     const user = await this.authRepository.create({ email, fullName, password: hashedPassword })
+    return user
+  }
+  async getProfileData(userId: string): Promise<User | null> {
+    const user = await this.authRepository.findById(userId)
     return user
   }
 }

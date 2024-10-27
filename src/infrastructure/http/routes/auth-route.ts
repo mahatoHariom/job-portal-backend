@@ -31,5 +31,18 @@ export default async function authRoutes(fastify: FastifyInstance) {
     },
 
     authController.register.bind(authController)
-  )
+  ),
+    fastify.get(
+      '/profile',
+      {
+        schema: {
+          response: {
+            201: $ref('createUserResponseSchema')
+          }
+        },
+        onRequest: fastify.authenticate
+      },
+
+      authController.getProfileData.bind(authController)
+    )
 }
