@@ -1,7 +1,5 @@
 import { Type } from '@sinclair/typebox'
-// import { FastifyInstance } from 'fastify'
 
-// Define the individual user detail schema
 export const userDetailSchema = Type.Object({
   phoneNumber: Type.Optional(Type.String()),
   address: Type.Optional(Type.String()),
@@ -11,7 +9,6 @@ export const userDetailSchema = Type.Object({
   schoolCollegeName: Type.Optional(Type.String())
 })
 
-// Create an extended schema for response that includes `id` and `userId`
 export const userDetailResponseSchema = Type.Intersect([
   userDetailSchema,
   Type.Object({
@@ -20,6 +17,22 @@ export const userDetailResponseSchema = Type.Intersect([
   })
 ])
 
-// You could define types for your schemas if needed using TypeBox's static inference
+export const userBaseSchema = Type.Object({
+  fullName: Type.String(),
+  email: Type.String(),
+  isVerified: Type.Boolean(),
+  role: Type.String(),
+  createdAt: Type.String({ format: 'date-time' }),
+  updatedAt: Type.String({ format: 'date-time' })
+})
+
+export const userResponseSchema = Type.Intersect([
+  userBaseSchema,
+  Type.Object({
+    id: Type.String(),
+    userDetail: Type.Optional(userDetailResponseSchema)
+  })
+])
+
 export type CreateUserDetailInput = typeof userDetailSchema
 export type UserDetailResponse = typeof userDetailResponseSchema

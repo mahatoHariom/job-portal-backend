@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import fastify, { FastifyInstance } from 'fastify'
+import fastify, { FastifyInstance, FastifyRequest } from 'fastify'
 import loggerConfig from './infrastructure/config/logger'
 import fastifyJwt from '@fastify/jwt'
 import fastifyCookie, { FastifyCookieOptions } from '@fastify/cookie'
@@ -10,6 +10,8 @@ import fSwagger from '@fastify/swagger'
 import fSwaggerUi from '@fastify/swagger-ui'
 import fRateLimit from '@fastify/rate-limit'
 import dotenv from 'dotenv'
+import multipart from '@fastify/multipart'
+import formBody from '@fastify/formbody'
 // import { authSchemas } from './domain/schemas/auth-schemas'
 
 import { errorHandler } from './app/middlewares/errorHandler'
@@ -18,6 +20,7 @@ import { container } from './infrastructure/container'
 import authRoutes from './infrastructure/http/routes/auth-route'
 import { swaggerUiOptions } from './infrastructure/config/swagger'
 import userRoutes from './infrastructure/http/routes/users-routes'
+import multer from 'fastify-multer'
 // import { userSchemas } from './domain/schemas/user-schema'
 
 dotenv.config()
@@ -28,6 +31,12 @@ const createApp = async () => {
     done()
   })
 
+  // await app.register(multer.contentParser)
+
+  await app.register(multipart)
+  // await app.register(multer)
+  await app.register(formBody)
+
   app.register(cors, {
     credentials: true,
     origin: [process.env.CLIENT_ENDPOINT as string]
@@ -35,6 +44,9 @@ const createApp = async () => {
 
   app.register(fhelmet, { contentSecurityPolicy: false })
 
+  // app.addContentTypeParser('*', function (req: FastifyRequest, done:) {
+  //   done()
+  // })
   app.register(fSwagger, {
     openapi: {
       info: {
@@ -62,7 +74,7 @@ const createApp = async () => {
   await app.register(fSwaggerUi, swaggerUiOptions)
 
   app.register(fRateLimit, {
-    max: 100,
+    max: 100000,
     timeWindow: '1 minute'
   })
 

@@ -6,9 +6,12 @@ import { Messages, StatusCode } from '@/domain/constants/messages'
 
 const setAuthenticateJWT = (server: FastifyInstance) => {
   server.decorate('authenticate', async (req: FastifyRequest) => {
+    console.log(req.headers.authorization, 'hello')
     const token = req.headers.authorization
+    console.log(token, 'ppp')
 
     const accessToken = token?.split(' ')[1]
+    console.log(accessToken, 'accessToken')
     if (!token) {
       throw new ApiError(Messages.TOKEN_NOT_FOUND, StatusCode.Unauthorized)
     }

@@ -17,12 +17,10 @@ model User {
   role         UserRole      @default(user)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-  images       Image[]
   testimonials Testimonial[]
   attendances  Attendance[]
   enrollments  Enrollment[]
   userDetail   UserDetail?   @relation("UserDetailRelation")
-  userDetailId String?       @unique
 }
 
 model UserDetail {
@@ -31,19 +29,20 @@ model UserDetail {
   address           String?
   motherName        String?
   fatherName        String?
+  profilePic        String?
   parentContact     String?
   schoolCollegeName String?
   user              User    @relation("UserDetailRelation", fields: [userId], references: [id])
   userId            String  @unique
 }
 
-model Image {
-  id        String @id @default(cuid())
-  public_id String
-  imgSrc    String
-  user      User   @relation(fields: [userId], references: [id])
-  userId    String
-}
+// model Image {
+//   id        String @id @default(cuid())
+//   public_id String
+//   imgSrc    String
+//   user      User   @relation(fields: [userId], references: [id])
+//   userId    String
+// }
 
 model Testimonial {
   id        String   @id @default(cuid())

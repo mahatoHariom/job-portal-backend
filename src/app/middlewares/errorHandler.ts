@@ -3,6 +3,7 @@ import ApiError from '@/infrastructure/config/ApiError'
 import { FastifyError, FastifyReply, FastifyRequest } from 'fastify'
 
 export const errorHandler = (error: FastifyError | ApiError | Error, request: FastifyRequest, reply: FastifyReply) => {
+  console.log(error, 'error')
   if (error instanceof ApiError) {
     reply.status(error.statusCode).send({
       statusCode: error.statusCode,

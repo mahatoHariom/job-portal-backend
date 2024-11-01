@@ -5,6 +5,7 @@ import { TYPES } from '@/types'
 import { PrismaAuthRepository } from '@/domain/repositories/auth-repository'
 import { User } from '@prisma/client'
 import { Messages, StatusCode } from '@/domain/constants/messages'
+import { validateAccessToken } from '@/domain/utils/jwt'
 
 interface AuthenticateRequest {
   email: string
@@ -22,7 +23,7 @@ interface RegisterRequest {
 export class AuthService {
   constructor(@inject(TYPES.IAuthRepository) private authRepository: PrismaAuthRepository) {}
 
-  async authenticate({ email, password }: AuthenticateRequest): Promise<Partial<User> | null> {
+  async authenticate({ email, password }: AuthenticateRequest): Promise<User | null> {
     const user = await this.authRepository.findByEmail(email)
     if (!user) {
       throw new ApiError(Messages.USER_NOT_FOUND, StatusCode.Unauthorized)
@@ -34,7 +35,7 @@ export class AuthService {
       throw new ApiError(Messages.PASSWORD_NOT_MATCHED, StatusCode.Forbidden)
     }
 
-    return { id: user.id, fullName: user.fullName, email: user.email, isVerified: user.isVerified, role: user.role }
+    return user
   }
 
   async register({ email, fullName, password, confirmPassword }: RegisterRequest) {
@@ -48,5 +49,11 @@ export class AuthService {
   async getProfileData(userId: string): Promise<User | null> {
     const user = await this.authRepository.findById(userId)
     return user
+  }
+  async verifyRefreshToken(token: string) {
+    console.log(token, 'tdssd')
+    const value = await validateAccessToken(token)
+    console.log(value, 'vvaaa')
+    return value
   }
 }

@@ -1,21 +1,23 @@
 import '@fastify/jwt'
+import { User } from '@prisma/client'
+import { Container } from 'inversify'
 
+// Modify the FastifyJWT declaration
 declare module '@fastify/jwt' {
   export interface FastifyJWT {
-    payload: { role: 'ADMIN' | 'MEMBER' }
-    user: {
-      role: 'ADMIN' | 'MEMBER'
-      sub: string
-    }
+    user: User
   }
 }
-
-// types.d.ts
-import 'fastify'
-import { Container } from 'inversify'
 
 declare module 'fastify' {
   interface FastifyInstance {
     container: Container
+    user: User | {}
   }
 }
+
+// declare module 'fastify' {
+//   interface FastifyRequest {
+//     user: User | null
+//   }
+// }

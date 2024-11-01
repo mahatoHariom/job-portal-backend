@@ -29,9 +29,18 @@ export const loginSchema = Type.Object({
 
 // Schema for login response
 export const loginResponseSchema = Type.Object({
-  accessToken: Type.String()
+  accessToken: Type.String(),
+  refreshToken: Type.String()
 })
 
+export const refreshTokenSchema = Type.Object({
+  refreshToken: Type.String()
+})
+
+export const refreshTokenResponseSchema = Type.Object({
+  // refreshToken: Type.String(),
+  accessToken: Type.String()
+})
 // Types inferred from schemas
 export type CreateUserInput = Static<typeof createUserSchema>
 export type CreateUserResponse = Static<typeof createUserResponseSchema>

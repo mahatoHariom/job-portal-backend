@@ -14,13 +14,19 @@ export class PrismaAuthRepository implements IAuthRepository {
 
   async findByEmail(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({
-      where: { email }
+      where: { email },
+      include: {
+        userDetail: true
+      }
     })
   }
 
   async findById(id: string): Promise<User | null> {
     return this.prisma.user.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        userDetail: true
+      }
     })
   }
 }

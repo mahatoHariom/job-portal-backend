@@ -11,6 +11,8 @@ import { generateHmacSha256Hash } from '@/domain/utils/create-payment-hash'
 import { esewaConfig } from '@/infrastructure/config/esewa'
 import { PaymentData } from '@/types/payment'
 import { Messages, StatusCode } from '@/domain/constants/messages'
+import { User, UserRole } from '@prisma/client'
+import { JwtPayload } from 'jsonwebtoken'
 
 @injectable()
 export class AuthController {
@@ -30,9 +32,15 @@ export class AuthController {
     return reply
       .setCookie('refreshToken', refreshToken, {
         path: '/',
-        secure: true,
-        sameSite: true,
-        httpOnly: true
+        secure: false,
+        sameSite: false
+        // httpOnly: true
+      })
+      .setCookie('accessToken', refreshToken, {
+        path: '/',
+        secure: false,
+        sameSite: false
+        // httpOnly: true
       })
       .status(200)
       .send({ accessToken, refreshToken, user })
@@ -44,14 +52,14 @@ export class AuthController {
     return reply.status(201).send(user)
   }
   async getProfileData(request: FastifyRequest, reply: FastifyReply) {
-    console.log('getProfileData', request)
     const user = await this.authService.getProfileData(request?.user?.id)
+
     if (!user) {
       throw new ApiError(Messages.USER_NOT_FOUND, StatusCode.NotFound)
     }
+    console.log('yoyo', user)
     return reply.status(201).send(user)
   }
-
   async initiateEsewaPayment(request: FastifyRequest, reply: FastifyReply) {
     const { amount, productId } = request.body as { amount: number; productId: string }
 
@@ -59,7 +67,6 @@ export class AuthController {
       throw new ApiError(Messages.AMOUNT_MUST_BE_GREATER, StatusCode.BadRequest)
     }
 
-    console.log(esewaConfig, 'config')
     let paymentData: PaymentData = {
       amount,
       failure_url: esewaConfig.failureUrl as string,
@@ -87,11 +94,54 @@ export class AuthController {
         })
       }
     } catch (error) {
-      console.log(error)
       throw new ApiError(Messages.PAYMENT_FAILED, StatusCode.InternalServerError)
       // return reply.status(500).send({ error: 'Payment initiation failed' })
     }
 
     return reply.send({ esewaUrl: paymentData.success_url })
+  }
+
+  async refresh(request: FastifyRequest<{ Body: { refreshToken: string } }>, reply: FastifyReply) {
+    const refreshToken = request.body.refreshToken
+
+    if (!refreshToken) {
+      throw new ApiError(Messages.USER_NOT_FOUND, StatusCode.NotFound)
+    }
+
+    const data = await this.authService.verifyRefreshToken(refreshToken)
+    console.log(data, 'this')
+    if (!data) {
+      throw new ApiError(Messages.INVALID_OR_TOKEN_EXPIRES, StatusCode.Unauthorized)
+    }
+
+    const user = await this.authService.getProfileData(data.id as string)
+
+    if (!user) {
+      throw new ApiError(Messages.USER_NOT_FOUND, StatusCode.NotFound)
+    }
+
+    // Generate new tokens
+    const accessToken = await generateJsonWebToken(user)
+    // const newRefreshToken = await generateRefreshToken(user)
+
+    return reply.status(200).send({ accessToken })
+  }
+
+  async logout(request: FastifyRequest, reply: FastifyReply) {
+    reply.clearCookie('refreshToken', {
+      path: '/',
+      secure: true,
+      sameSite: true,
+      httpOnly: true
+    })
+
+    reply.clearCookie('accessToken', {
+      path: '/',
+      secure: true,
+      sameSite: true,
+      httpOnly: true
+    })
+
+    return reply.status(200).send()
   }
 }
