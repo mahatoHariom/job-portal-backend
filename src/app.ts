@@ -80,7 +80,8 @@ const createApp = async () => {
 
   app.register(fastifyCookie, {
     secret: process.env.JWT_SECRET,
-    hook: 'preHandler',
+    hook: false,
+
     parseOptions: {}
   } as FastifyCookieOptions)
 

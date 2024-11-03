@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { TYPES } from '@/types'
 import { UserControllers } from '@/app/controllers/users-controller'
-import { CreateUserDetailInput, userDetailSchema } from '@/domain/schemas/user-schema'
+import { CreateUserDetailInput, userDetailSchema, userResponseSchema } from '@/domain/schemas/user-schema'
 import multer from 'fastify-multer'
 import { upload } from '@/infrastructure/config/multer'
 import { Type } from '@sinclair/typebox'
@@ -20,10 +20,10 @@ export default async function userRoutes(fastify: FastifyInstance) {
           profilePic: Type.Optional(Type.String({ format: 'binary' }))
         }),
         response: {
-          201: { type: 'null' }
+          201: userResponseSchema
         }
       },
-      // onRequest: fastify.authenticate,
+      onRequest: fastify.authenticate,
       preValidation: upload.single('profilePic')
     },
     userControllers.completeProfile.bind(userControllers)

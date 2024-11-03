@@ -29,21 +29,30 @@ export class AuthController {
     const refreshToken = await generateRefreshToken(user)
     const accessToken = await generateJsonWebToken(user)
 
-    return reply
-      .setCookie('refreshToken', refreshToken, {
-        path: '/',
-        secure: false,
-        sameSite: false
-        // httpOnly: true
-      })
-      .setCookie('accessToken', refreshToken, {
-        path: '/',
-        secure: false,
-        sameSite: false
-        // httpOnly: true
-      })
-      .status(200)
-      .send({ accessToken, refreshToken, user })
+    return (
+      reply
+        // .setCookie('refreshToken', refreshToken, {
+        //   path: '/',
+        //   secure: false,
+        //   sameSite: 'strict',
+        //   httpOnly: true
+        // })
+        // .setCookie('accessToken', accessToken, {
+        //   path: '/',
+        //   secure: false,
+
+        //   sameSite: 'strict',
+        //   httpOnly: true
+        // })
+        // .setCookie('user', JSON.stringify(user), {
+        //   path: '/',
+        //   secure: false,
+        //   sameSite: 'strict',
+        //   httpOnly: true
+        // })
+        .status(200)
+        .send({ accessToken, refreshToken, user })
+    )
   }
 
   async register(request: FastifyRequest<{ Body: CreateUserInput }>, reply: FastifyReply) {
@@ -130,15 +139,22 @@ export class AuthController {
   async logout(request: FastifyRequest, reply: FastifyReply) {
     reply.clearCookie('refreshToken', {
       path: '/',
-      secure: true,
-      sameSite: true,
+      secure: false,
+      sameSite: 'strict',
       httpOnly: true
     })
 
     reply.clearCookie('accessToken', {
       path: '/',
-      secure: true,
-      sameSite: true,
+      secure: false,
+      sameSite: 'strict',
+      httpOnly: true
+    })
+
+    reply.clearCookie('user', {
+      path: '/',
+      secure: false,
+      sameSite: 'strict',
       httpOnly: true
     })
 

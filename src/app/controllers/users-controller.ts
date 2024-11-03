@@ -7,7 +7,8 @@ import ApiError from '@/infrastructure/config/ApiError'
 import { PrismaAuthRepository } from '@/domain/repositories/auth-repository'
 import { UserServices } from '../services/user-service'
 import { Messages, StatusCode } from '@/domain/constants/messages'
-
+import { generateJsonWebToken, generateRefreshToken } from '@/domain/utils/jwt'
+import { User } from '@prisma/client'
 @injectable()
 export class UserControllers {
   constructor(
@@ -18,15 +19,37 @@ export class UserControllers {
 
   async completeProfile(request: FastifyRequest<{ Body: CreateUserDetailInput }>, reply: FastifyReply) {
     const data = request.body
-
-    const user = await this.authRepository.findById(request?.user?.id)
+    const user = await this.authRepository.findById(request.user?.id)
 
     if (!user) {
       throw new ApiError(Messages.INVALID_CREDENTIAL, StatusCode.Unauthorized)
     }
 
-    await this.userServices.completeProfile(data, user.id)
+    const updatedUser = await this.userServices.completeProfile(data, user.id)
 
-    reply.status(200).send()
+    const refreshToken = await generateRefreshToken(updatedUser)
+    const accessToken = await generateJsonWebToken(updatedUser)
+
+    return reply
+      // .setCookie('refreshToken', refreshToken, {
+      //   path: '/',
+      //   secure: false,
+      //   sameSite: 'strict',
+      //   httpOnly: true
+      // })
+      // .setCookie('accessToken', accessToken, {
+      //   path: '/',
+      //   secure: false,
+      //   sameSite: 'strict',
+      //   httpOnly: true
+      // })
+      // .setCookie('user', JSON.stringify(user), {
+      //   path: '/',
+      //   secure: false,
+      //   sameSite: 'strict',
+      //   httpOnly: true
+      // })
+      .status(200)
+      .send({ accessToken, refreshToken, updatedUser })
   }
 }
