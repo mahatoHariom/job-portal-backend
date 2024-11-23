@@ -1,105 +1,53 @@
 import 'reflect-metadata'
-import fastify, { FastifyInstance, FastifyRequest } from 'fastify'
-import loggerConfig from './infrastructure/config/logger'
-import fastifyJwt from '@fastify/jwt'
-import fastifyCookie, { FastifyCookieOptions } from '@fastify/cookie'
-import cors from '@fastify/cors'
-import fhelmet from '@fastify/helmet'
-// import { env } from './env'
-import fSwagger from '@fastify/swagger'
-import fSwaggerUi from '@fastify/swagger-ui'
-import fRateLimit from '@fastify/rate-limit'
-import dotenv from 'dotenv'
-import multipart from '@fastify/multipart'
-import formBody from '@fastify/formbody'
-// import { authSchemas } from './domain/schemas/auth-schemas'
+import fastify, { FastifyInstance } from 'fastify'
 
 import { errorHandler } from './app/middlewares/errorHandler'
-import setAuthenticateJWT from './app/middlewares/verify-jwt'
 import { container } from './infrastructure/container'
-import authRoutes from './infrastructure/http/routes/auth-route'
-import { swaggerUiOptions } from './infrastructure/config/swagger'
-import userRoutes from './infrastructure/http/routes/users-routes'
-import multer from 'fastify-multer'
-// import { userSchemas } from './domain/schemas/user-schema'
+import { loadEnvironment } from './infrastructure/environment'
+import { registerPlugins } from './infrastructure/plugins'
+import { registerMiddlewares } from './infrastructure/middlewares'
+import { registerRoutes } from './infrastructure/routes'
 
-dotenv.config()
-const createApp = async () => {
-  const app: FastifyInstance = fastify({ logger: loggerConfig })
+/**
+ * Creates and configures the Fastify application
+ */
+const createApp = async (): Promise<FastifyInstance> => {
+  // Load environment variables
+  loadEnvironment()
 
-  app.addHook('onError', (request, reply, error, done) => {
-    done()
-  })
-
-  // await app.register(multer.contentParser)
-
-  await app.register(multipart)
-  // await app.register(multer)
-  await app.register(formBody)
-
-  app.register(cors, {
-    credentials: true,
-    origin: [process.env.CLIENT_ENDPOINT as string]
-  })
-
-  app.register(fhelmet, { contentSecurityPolicy: false })
-
-  // app.addContentTypeParser('*', function (req: FastifyRequest, done:) {
-  //   done()
-  // })
-  app.register(fSwagger, {
-    openapi: {
-      info: {
-        title: 'Fastify API',
-        description: 'PostgreSQL, Prisma, Fastify, and Swagger REST API',
-        version: '1.0.0'
-      },
-      externalDocs: {
-        url: 'https://swagger.io',
-        description: 'Find more info here'
-      },
-      servers: [{ url: 'http://localhost:9000' }],
-      components: {
-        securitySchemes: {
-          bearerAuth: {
-            type: 'http',
-            scheme: 'bearer',
-            bearerFormat: 'JWT'
-          }
-        }
-      },
-      security: [{ bearerAuth: [] }]
+  // Initialize Fastify with logger
+  const app = fastify({
+    logger: true,
+    ajv: {
+      customOptions: {
+        removeAdditional: 'all',
+        coerceTypes: true,
+        useDefaults: true
+      }
     }
   })
-  await app.register(fSwaggerUi, swaggerUiOptions)
 
-  app.register(fRateLimit, {
-    max: 100000,
-    timeWindow: '1 minute'
-  })
+  try {
+    // Register all plugins
+    await registerPlugins(app)
 
-  app.register(fastifyCookie, {
-    secret: process.env.JWT_SECRET,
-    hook: false,
+    // Register all middlewares
+    await registerMiddlewares(app)
 
-    parseOptions: {}
-  } as FastifyCookieOptions)
+    // Decorate app with DI container
+    app.decorate('container', container)
 
-  app.register(fastifyJwt, { secret: process.env.JWT_SECRET as string })
+    // Register all routes
+    await registerRoutes(app)
 
-  // for (const schema of [...authSchemas, ...userSchemas]) {
-  //   app.addSchema(schema)
-  // }
+    // Set global error handler
+    app.setErrorHandler(errorHandler)
 
-  setAuthenticateJWT(app)
-
-  app.decorate('container', container)
-
-  app.register(authRoutes, { prefix: '/api/v1/auth' })
-  app.register(userRoutes, { prefix: '/api/v1/user' })
-  app.setErrorHandler(errorHandler)
-
-  return app
+    return app
+  } catch (error) {
+    app.log.error(error)
+    process.exit(1)
+  }
 }
 
 export default createApp

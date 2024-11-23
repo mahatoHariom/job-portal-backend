@@ -29,30 +29,7 @@ export class AuthController {
     const refreshToken = await generateRefreshToken(user)
     const accessToken = await generateJsonWebToken(user)
 
-    return (
-      reply
-        // .setCookie('refreshToken', refreshToken, {
-        //   path: '/',
-        //   secure: false,
-        //   sameSite: 'strict',
-        //   httpOnly: true
-        // })
-        // .setCookie('accessToken', accessToken, {
-        //   path: '/',
-        //   secure: false,
-
-        //   sameSite: 'strict',
-        //   httpOnly: true
-        // })
-        // .setCookie('user', JSON.stringify(user), {
-        //   path: '/',
-        //   secure: false,
-        //   sameSite: 'strict',
-        //   httpOnly: true
-        // })
-        .status(200)
-        .send({ accessToken, refreshToken, user })
-    )
+    return reply.status(200).send({ accessToken, refreshToken, user })
   }
 
   async register(request: FastifyRequest<{ Body: CreateUserInput }>, reply: FastifyReply) {
