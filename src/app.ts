@@ -1,6 +1,5 @@
 import 'reflect-metadata'
 import fastify, { FastifyInstance } from 'fastify'
-
 import { errorHandler } from './app/middlewares/errorHandler'
 import { container } from './infrastructure/container'
 import { loadEnvironment } from './infrastructure/environment'

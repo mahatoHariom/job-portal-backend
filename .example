@@ -1,7 +1,0 @@
-NODE_ENV=dev
-JWT_SECRET="Sdfsfsdfsdfsfsd"
-PORT=9000
-CLIENT_ENDPOINT="http://localhost:9000"
-REFRESH_TOKEN_EXPIRES="7d"
-ACCESS_TOKEN_EXPIRES="1d"
-DATABASE_URL=postgresql://mahato:mahato@localhost:5432/fastify?schema=sample

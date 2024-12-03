@@ -12,6 +12,10 @@ import { ContactController } from '@/app/controllers/contact-controller'
 import { ContactService } from '@/app/services/contact-service'
 import { IContactRepository } from '@/domain/interfaces/contact-interface'
 import { PrismaContactRepository } from '@/domain/repositories/prtisma-contact-repository'
+import { EnrollmentController } from '@/app/controllers/enrollment-controller'
+import { EnrollmentService } from '@/app/services/enrollment-service'
+import { IEnrollmentRepository } from '@/domain/interfaces/enrollment-interface'
+import { PrismaEnrollmentRepository } from '@/domain/repositories/enrollment-repository'
 
 const container = new Container()
 
@@ -34,5 +38,16 @@ container.bind<ContactController>(TYPES.ContactController).to(ContactController)
 container.bind<ContactService>(TYPES.ContactService).to(ContactService).inSingletonScope()
 
 container.bind<IContactRepository>(TYPES.IContactRepository).to(PrismaContactRepository).inSingletonScope()
+
+// Enrollment
+
+container.bind<EnrollmentController>(TYPES.EnrollmentController).to(EnrollmentController).inSingletonScope()
+
+container.bind<EnrollmentService>(TYPES.EnrollmentService).to(EnrollmentService).inSingletonScope()
+
+container
+  .bind<PrismaEnrollmentRepository>(TYPES.PrismaEnrollmentRepository)
+  .to(PrismaEnrollmentRepository)
+  .inSingletonScope()
 
 export { container }

@@ -30,26 +30,6 @@ export class UserControllers {
     const refreshToken = await generateRefreshToken(updatedUser)
     const accessToken = await generateJsonWebToken(updatedUser)
 
-    return reply
-      // .setCookie('refreshToken', refreshToken, {
-      //   path: '/',
-      //   secure: false,
-      //   sameSite: 'strict',
-      //   httpOnly: true
-      // })
-      // .setCookie('accessToken', accessToken, {
-      //   path: '/',
-      //   secure: false,
-      //   sameSite: 'strict',
-      //   httpOnly: true
-      // })
-      // .setCookie('user', JSON.stringify(user), {
-      //   path: '/',
-      //   secure: false,
-      //   sameSite: 'strict',
-      //   httpOnly: true
-      // })
-      .status(200)
-      .send({ accessToken, refreshToken, updatedUser })
+    return reply.status(200).send({ accessToken, refreshToken, updatedUser })
   }
 }
