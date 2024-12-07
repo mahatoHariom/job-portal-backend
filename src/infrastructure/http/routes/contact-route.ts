@@ -10,7 +10,7 @@ export default async function contactRoutes(fastify: FastifyInstance) {
     '/contact/:userId',
     {
       schema: {
-        tags: ['User'],
+        tags: ['Contact'],
         body: createContactSchema,
         response: {
           201: { type: 'null' }

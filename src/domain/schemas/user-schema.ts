@@ -9,6 +9,20 @@ export const userDetailSchema = Type.Object({
   schoolCollegeName: Type.Optional(Type.String())
 })
 
+export const changePasswordInputSchema = Type.Object({
+  password: Type.String(),
+  confirmPassword: Type.String()
+})
+
+export const getEnrolledCourseSchema = Type.Object({
+  userId: Type.String()
+})
+
+export const enrollSubjectBody = Type.Object({
+  subjectId: Type.String(),
+  userId: Type.String()
+})
+
 export const userDetailResponseSchema = Type.Intersect([
   userDetailSchema,
   Type.Object({
@@ -34,5 +48,8 @@ export const userResponseSchema = Type.Intersect([
   })
 ])
 
+export type GetEnrolledCourseInput = typeof getEnrolledCourseSchema
+export type ChangePasswordInput = typeof changePasswordInputSchema
 export type CreateUserDetailInput = typeof userDetailSchema
+export type EnrollSubjectInput = typeof enrollSubjectBody
 export type UserDetailResponse = typeof userDetailResponseSchema

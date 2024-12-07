@@ -8,31 +8,16 @@ export const enrollmentCreateSchema = Type.Object({
 
 // Response schema for an enrollment
 export const enrollmentResponseSchema = Type.Object({
-  message: Type.String(), // Adding message to the response
+  message: Type.String(), // Message indicating the status of the enrollment
   enrollment: Type.Intersect([
     enrollmentCreateSchema,
     Type.Object({
       id: Type.String(), // Unique ID for the enrollment
-      enrollmentDate: Type.String({ format: 'date-time' }) // Timestamp for when the enrollment was created
+      enrollmentDate: Type.String({ format: 'date-time' }) // Timestamp of when the enrollment was created
     })
   ])
-})
-
-// Detailed response schema for an enrollment (with user and subject details)
-export const detailedEnrollmentResponseSchema = Type.Object({
-  id: Type.String(),
-  enrollmentDate: Type.String({ format: 'date-time' }),
-  user: Type.Object({
-    id: Type.String(),
-    fullName: Type.String()
-  }),
-  subject: Type.Object({
-    id: Type.String(),
-    name: Type.String()
-  })
 })
 
 // TypeScript types generated from the schemas
 export type EnrollmentCreateInput = Static<typeof enrollmentCreateSchema>
 export type EnrollmentResponse = Static<typeof enrollmentResponseSchema>
-export type DetailedEnrollmentResponse = Static<typeof detailedEnrollmentResponseSchema>

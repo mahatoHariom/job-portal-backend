@@ -1,7 +1,3 @@
-import { EnrollmentController } from '@/app/controllers/enrollment-controller'
-import { EnrollmentService } from '@/app/services/enrollment-service'
-import { PrismaEnrollmentRepository } from '@/domain/repositories/enrollment-repository'
-
 export const TYPES = {
   AuthController: Symbol.for('AuthController'),
 
@@ -18,10 +14,14 @@ export const TYPES = {
   IContactRepository: Symbol.for('IContactRepository'),
   PrismaContactRepository: Symbol.for('PrismaContactRepository'),
 
-  EnrollmentController: Symbol.for('EnrollmentController'),
-  EnrollmentService: Symbol.for('EnrollmentService'),
-  // IContactRepository: Symbol.for('IContactRepository'),
-  PrismaEnrollmentRepository: Symbol.for('PrismaEnrollmentRepository'),
+  // Subject
+
+  SubjectController: Symbol.for('SubjectController'),
+  SubjectService: Symbol.for('SubjectService'),
+  ISubjectRepository: Symbol.for('ISubjectRepository'),
+  PrismaSubjectRepository: Symbol.for('PrismaSubjectRepository'),
+
+  //
 
   PrismaClient: Symbol.for('PrismaClient'),
   PrismaService: Symbol.for('PrismaService')

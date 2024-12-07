@@ -20,17 +20,34 @@ model Contact {
 }
 
 model User {
-  id          String       @id @default(cuid())
-  fullName    String       @map("name")
-  email       String       @unique
-  password    String
-  isVerified  Boolean      @default(false)
-  role        UserRole     @default(user)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  userDetail  UserDetail?  @relation("UserDetailRelation")
-  contacts    Contact[]    @relation("UserContacts")
-  enrollments Enrollment[]
+  id         String        @id @default(cuid())
+  fullName   String        @map("name")
+  email      String        @unique
+  password   String
+  isVerified Boolean       @default(false)
+  role       UserRole      @default(user)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  userDetail UserDetail?   @relation("UserDetailRelation")
+  contacts   Contact[]     @relation("UserContacts")
+  subjects   UserSubject[]
+}
+
+model Subject {
+  id          String        @id @default(uuid())
+  name        String        @unique
+  description String?
+  createdAt   DateTime      @default(now())
+  users       UserSubject[]
+}
+
+model UserSubject {
+  id        String   @id @default(uuid())
+  userId    String
+  subjectId String
+  user      User     @relation(fields: [userId], references: [id])
+  subject   Subject  @relation(fields: [subjectId], references: [id])
+  createdAt DateTime @default(now())
 }
 
 model UserDetail {
@@ -46,35 +63,7 @@ model UserDetail {
   userId            String  @unique
 }
 
-model Subject {
-  id          String      @id @default(cuid())
-  name        SubjectType // Use enum for predefined subject categories
-  description String?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  enrollments Enrollment[] // Relationship with Enrollment
-}
-
-model Enrollment {
-  id             String   @id @default(cuid())
-  userId         String
-  subjectId      String
-  enrollmentDate DateTime @default(now())
-  user           User     @relation(fields: [userId], references: [id])
-  subject        Subject  @relation(fields: [subjectId], references: [id])
-}
-
 enum UserRole {
   admin
   user
-}
-
-enum SubjectType {
-  SCIENCE
-  MANAGEMENT
-  COMPUTER
-  HA_LAB
-  STAFF
-  OTHER
 }

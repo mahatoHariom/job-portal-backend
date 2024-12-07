@@ -12,10 +12,10 @@ import { ContactController } from '@/app/controllers/contact-controller'
 import { ContactService } from '@/app/services/contact-service'
 import { IContactRepository } from '@/domain/interfaces/contact-interface'
 import { PrismaContactRepository } from '@/domain/repositories/prtisma-contact-repository'
-import { EnrollmentController } from '@/app/controllers/enrollment-controller'
-import { EnrollmentService } from '@/app/services/enrollment-service'
-import { IEnrollmentRepository } from '@/domain/interfaces/enrollment-interface'
-import { PrismaEnrollmentRepository } from '@/domain/repositories/enrollment-repository'
+import { SubjectController } from '@/app/controllers/subject-controller'
+import { SubjectService } from '@/app/services/subject-service'
+import { ISubjectRepository } from '@/domain/interfaces/subject.interface'
+import { PrismaSubjectRepository } from '@/domain/repositories/subject-repository'
 
 const container = new Container()
 
@@ -39,15 +39,12 @@ container.bind<ContactService>(TYPES.ContactService).to(ContactService).inSingle
 
 container.bind<IContactRepository>(TYPES.IContactRepository).to(PrismaContactRepository).inSingletonScope()
 
-// Enrollment
+// Subject
 
-container.bind<EnrollmentController>(TYPES.EnrollmentController).to(EnrollmentController).inSingletonScope()
+container.bind<SubjectController>(TYPES.SubjectController).to(SubjectController).inSingletonScope()
 
-container.bind<EnrollmentService>(TYPES.EnrollmentService).to(EnrollmentService).inSingletonScope()
+container.bind<SubjectService>(TYPES.SubjectService).to(SubjectService).inSingletonScope()
 
-container
-  .bind<PrismaEnrollmentRepository>(TYPES.PrismaEnrollmentRepository)
-  .to(PrismaEnrollmentRepository)
-  .inSingletonScope()
+container.bind<ISubjectRepository>(TYPES.ISubjectRepository).to(PrismaSubjectRepository).inSingletonScope()
 
 export { container }

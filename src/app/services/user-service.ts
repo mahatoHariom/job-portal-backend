@@ -13,4 +13,7 @@ export class UserServices {
   async completeProfile(data: CreateUserDetailInput, userId: string): Promise<User> {
     return await this.userRepository.completeProfile(data, userId)
   }
+  async changePassword(userId: string, newPassword: string): Promise<User> {
+    return this.userRepository.changePassword(userId, newPassword)
+  }
 }

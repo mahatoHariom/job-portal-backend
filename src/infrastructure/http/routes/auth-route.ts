@@ -18,6 +18,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
     '/login',
     {
       schema: {
+        tags: ['Auth'],
         body: loginSchema,
         response: {
           201: loginResponseSchema
@@ -30,6 +31,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
       '/refresh',
       {
         schema: {
+          tags: ['Auth'],
           body: refreshTokenSchema,
           response: {
             200: refreshTokenResponseSchema
@@ -43,6 +45,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
     '/register',
     {
       schema: {
+        tags: ['Auth'],
         body: createUserSchema,
         response: {
           201: createUserResponseSchema
@@ -56,6 +59,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
       '/logout',
       {
         schema: {
+          tags: ['Auth'],
           response: {
             200: { type: 'null' }
           }
@@ -69,6 +73,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
     '/profile',
     {
       schema: {
+        tags: ['Auth'],
         response: {
           201: userResponseSchema
         }
